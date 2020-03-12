@@ -32,18 +32,19 @@ class Render(tkinter.Tk):
 
 
     def draw(self, grid):
-        try:
-            for row in range(grid.shape[0]):
-                for col in range(grid.shape[1]):
-                    self._canvas.itemconfig(self._grid_tags[row][col], fill=self.C_COLORS[int(math.log2(grid[row][col]["color"]))])
+        with grid.lock:
+            try:
+                for row in range(grid.shape[0]):
+                    for col in range(grid.shape[1]):
+                        self._canvas.itemconfig(self._grid_tags[row][col], fill=self.C_COLORS[int(math.log2(grid[row][col]["color"]))])
 
-        except IndexError:
-            print("WARNING: Grid sized changing is not supported.")
+            except IndexError:
+                print("WARNING: Grid sized changing is not supported.")
 
 
     def _draw_loop_inner(self, grid):
         self.draw(grid)
-        self._canvas.after(10, lambda : self._draw_loop_inner(grid))
+        self._canvas.after(100, lambda : self._draw_loop_inner(grid))
 
 
     def draw_loop(self, grid):
